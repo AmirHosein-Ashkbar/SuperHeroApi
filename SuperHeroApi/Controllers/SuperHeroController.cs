@@ -17,9 +17,11 @@ namespace SuperHeroApi.Controllers
             _superHeroService = superHeroService;
         }
 
-        [HttpGet("getAll")]
-        public async Task<ActionResult<List<SuperHeroResponseDto>>> GetAllHeroes()
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<BaseResponse<List<SuperHeroResponseDto>>>> GetAllHeroes()
         {
+            var response = new BaseResponse<List<SuperHeroResponseDto>>();
+
             var result = await _superHeroService.GetAllHeroes();
 
             var heroes = new List<SuperHeroResponseDto>();
@@ -29,50 +31,98 @@ namespace SuperHeroApi.Controllers
                 hero = item.MapSuperHeroToSuperHeroResponse();
                 heroes.Add(hero);
             }
-            return Ok(heroes);
+            response.Result = heroes;
+            response.StatusCode = 200;
+            response.Message = "OK";
+            response.isSuccess = true;
+            return Ok(response);
         }
 
-        [HttpPost("get")]
-        public async Task<ActionResult<SuperHeroResponseDto>> GetHero([FromBody] SuperHeroRequestDto requestedHero )
+        [HttpPost("Get")]
+        public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> GetHero([FromBody] SuperHeroRequestDto requestedHero )
         {
+            var response = new BaseResponse<SuperHeroResponseDto>();
+
             var result = await _superHeroService.GetHero(requestedHero);
             if (result == null)
-                return NotFound("hero not found");
-
+            {
+                response.Result = null;
+                response.Message = "hero not found";
+                response.StatusCode = 404;
+                response.isSuccess = false;
+                return NotFound(response);
+            }
             var hero = new SuperHeroResponseDto();
             hero = result.MapSuperHeroToSuperHeroResponse();
-            return Ok(hero);
+
+            response.Result = hero;
+            response.Message = "OK";
+            response.StatusCode = 200;
+            response.isSuccess = true;
+            return Ok(response);
         }
 
-        [HttpPost("addhero")]
-        public async Task<ActionResult<List<SuperHeroResponseDto>>> AddHero([FromBody]SuperHeroCreateDto heroCreate)
+        [HttpPost("Add")]
+        public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> AddHero([FromBody]SuperHeroCreateDto heroCreate)
         {
+            var response = new BaseResponse<SuperHeroResponseDto>();
+
             var result = await _superHeroService.AddHero(heroCreate);
 
             var createdHero = new SuperHeroResponseDto();
             createdHero = result.MapSuperHeroToSuperHeroResponse();
-            return Ok(createdHero);
+
+            response.Result = createdHero;
+            response.Message = $"{createdHero.Name} is successfully added.";
+            response.StatusCode = 200;
+            response.isSuccess = true;
+            return Ok(response);
         }
 
-        [HttpPut("updatehero")]
-        public async Task<ActionResult<SuperHeroResponseDto>> UpdateHero([FromBody] SuperHeroUpdateDto heroUpdate)
+        [HttpPut("Update")]
+        public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> UpdateHero([FromBody] SuperHeroUpdateDto heroUpdate)
         {
+            var response = new BaseResponse<SuperHeroResponseDto>();
+
             var result = await _superHeroService.UpdateHero(heroUpdate);
             if (result == null)
-                return NotFound("hero not found");
+            {
+                response.Result = null;
+                response.Message = "hero not found.";
+                response.StatusCode = 404;
+                response.isSuccess = false;
+                return NotFound(response);
+            }
 
             var updatedHero = new SuperHeroResponseDto();
             updatedHero = result.MapSuperHeroToSuperHeroResponse();
-            return Ok(updatedHero);
+
+            response.Result = updatedHero;
+            response.Message = $"{updatedHero.Name} is successfully updated.";
+            response.StatusCode = 200;
+            response.isSuccess = true;
+            return Ok(response);
         }
 
         [HttpDelete]
-        public async Task<bool> DeleteHero([FromBody]SuperHeroRequestDto requestedHero)
+        public async Task<BaseResponse<bool>> DeleteHero([FromBody]SuperHeroRequestDto requestedHero)
         {
+            var response = new BaseResponse<bool>();
+
             var result = await _superHeroService.DeleteHero(requestedHero);
             if (result == false)
-                return false;
-            return true;
+            {
+                response.Result=false;
+                response.Message = "SuperHero not found.";
+                response.StatusCode = 404;
+                response.isSuccess = false;
+                return response;
+            }
+            response.Result = true;
+            response.Message = "SuperHero deleted";
+            response.StatusCode = 200;
+            response.isSuccess = true;
+            return response;
         }
 
     }
