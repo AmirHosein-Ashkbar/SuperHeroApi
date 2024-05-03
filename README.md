@@ -36,7 +36,7 @@ To get started with SuperHeroApi, follow these steps:
    - GET `/api/SuperHero/getAll`: Get all superheroes.
      ```bash
      # Example using cURL
-     curl -X 'GET' \'https://localhost:7257/api/SuperHero/getAll' \ -H 'accept: text/plain'
+     curl -X 'GET' \'/api/SuperHero/getAll' \ -H 'accept: text/plain'
      ```
 
    - POST `/api/SuperHero/get`: Get a specific superhero by ID.
