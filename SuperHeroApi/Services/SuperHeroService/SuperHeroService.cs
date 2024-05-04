@@ -8,33 +8,33 @@ namespace SuperHeroApi.Services.SuperHeroService
 {
     public class SuperHeroService : ISuperHeroService
     {
-        private static List<SuperHero> superHeroes = new List<SuperHero>
-            {
-                new SuperHero
-                {
-                    Id=1,
-                    Name="Spider Man",
-                    FirstName="Peter",
-                    LastName="Parker",
-                    Place="New York City"
-                },
-                new SuperHero
-                {
-                    Id=2,
-                    Name="BatMan",
-                    FirstName="Bruce",
-                    LastName="Wayne",
-                    Place="Gotham City"
-                },
-                new SuperHero
-                {
-                    Id=3,
-                    Name="Iron Man",
-                    FirstName="Tony",
-                    LastName="Stark",
-                    Place="Long Island"
-                },
-            };
+        //private static List<SuperHero> superHeroes = new List<SuperHero>
+        //    {
+        //        new SuperHero
+        //        {
+        //            Id=1,
+        //            Name="Spider Man",
+        //            FirstName="Peter",
+        //            LastName="Parker",
+        //            Place="New York City"
+        //        },
+        //        new SuperHero
+        //        {
+        //            Id=2,
+        //            Name="BatMan",
+        //            FirstName="Bruce",
+        //            LastName="Wayne",
+        //            Place="Gotham City"
+        //        },
+        //        new SuperHero
+        //        {
+        //            Id=3,
+        //            Name="Iron Man",
+        //            FirstName="Tony",
+        //            LastName="Stark",
+        //            Place="Long Island"
+        //        },
+        //    };
         private readonly DataContext _context;
 
         public SuperHeroService(DataContext context)

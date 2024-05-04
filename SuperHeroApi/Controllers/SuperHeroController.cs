@@ -10,7 +10,7 @@ namespace SuperHeroApi.Controllers
     [ApiController]
     public class SuperHeroController : ControllerBase
     {
-        private static ISuperHeroService _superHeroService;
+        private readonly ISuperHeroService _superHeroService;
 
         public SuperHeroController(ISuperHeroService superHeroService)
         {
