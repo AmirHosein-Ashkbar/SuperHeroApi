@@ -51,7 +51,7 @@ namespace SuperHeroApi.Services.SuperHeroService
         {
             var superHero = await SearchHero(requestedHero);
 
-            if (superHero == null)
+            if (superHero is null)
                 return null;
 
             return superHero;
@@ -69,7 +69,7 @@ namespace SuperHeroApi.Services.SuperHeroService
         public async Task<SuperHero> UpdateHero(SuperHeroUpdateDto heroUpdate)
         {
             var superHeroToUpdate = await _context.SuperHeroes.FindAsync(heroUpdate.Id);
-            if (superHeroToUpdate == null)
+            if (superHeroToUpdate is null)
                 return null;
 
             superHeroToUpdate.Name = heroUpdate.Name;
@@ -97,7 +97,7 @@ namespace SuperHeroApi.Services.SuperHeroService
         public async Task<SuperHero> SearchHero(SuperHeroRequestDto requestedHero)
         {
             var superHero = await _context.SuperHeroes.FindAsync(requestedHero.Id);
-            if (superHero == null)
+            if (superHero is null)
                 return null;
 
             return superHero;

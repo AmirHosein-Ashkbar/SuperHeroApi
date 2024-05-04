@@ -44,7 +44,7 @@ namespace SuperHeroApi.Controllers
             var response = new BaseResponse<SuperHeroResponseDto>();
 
             var result = await _superHeroService.GetHero(requestedHero);
-            if (result == null)
+            if (result is null)
             {
                 response.Result = null;
                 response.Message = "hero not found";
@@ -85,7 +85,7 @@ namespace SuperHeroApi.Controllers
             var response = new BaseResponse<SuperHeroResponseDto>();
 
             var result = await _superHeroService.UpdateHero(heroUpdate);
-            if (result == null)
+            if (result is null)
             {
                 response.Result = null;
                 response.Message = "hero not found.";
@@ -110,7 +110,7 @@ namespace SuperHeroApi.Controllers
             var response = new BaseResponse<bool>();
 
             var result = await _superHeroService.DeleteHero(requestedHero);
-            if (result == false)
+            if (result is false)
             {
                 response.Result=false;
                 response.Message = "SuperHero not found.";
