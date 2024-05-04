@@ -1,7 +1,6 @@
-﻿namespace SuperHeroApi.DTO
+﻿namespace SuperHeroApi.DTO;
+
+public class SuperHeroRequestDto
 {
-    public class SuperHeroRequestDto
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }
