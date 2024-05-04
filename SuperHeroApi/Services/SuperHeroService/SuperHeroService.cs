@@ -96,15 +96,7 @@ namespace SuperHeroApi.Services.SuperHeroService
         }
         public async Task<SuperHero> SearchHero(SuperHeroRequestDto requestedHero)
         {
-            //search by id
             var superHero = await _context.SuperHeroes.FindAsync(requestedHero.Id);
-            //if not found by id then search by name
-            if (superHero == null && requestedHero.Name != null)
-            {
-                var q = _context.SuperHeroes.Where(h => h.Name.Contains(requestedHero.Name));
-                superHero = q.FirstOrDefault();
-            }
-
             if (superHero == null)
                 return null;
 
