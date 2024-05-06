@@ -5,6 +5,8 @@ using SuperHeroApi.Services.SuperHeroService;
 using SuperHeroApi.Extentions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace SuperHeroApi.Controllers;
 
@@ -29,8 +31,8 @@ public class SuperHeroController : ControllerBase
         var heroes = new List<SuperHeroResponseDto>();
         foreach (var item in result)
         {
-            var hero = new SuperHeroResponseDto();
-            hero = item.MapSuperHeroToSuperHeroResponse();
+            var hero = new SuperHeroResponseDto(item.Name, $"{item.FirstName} {item.LastName}", item.Place);
+            //hero = item.MapSuperHeroToSuperHeroResponse();
             heroes.Add(hero);
         }
         response.Result = heroes;
@@ -54,7 +56,7 @@ public class SuperHeroController : ControllerBase
             response.isSuccess = false;
             return NotFound(response);
         }
-        var hero = new SuperHeroResponseDto();
+        var hero = new SuperHeroResponseDto(result.Name, $"{result.FirstName} {result.LastName}", result.Place);
         hero = result.MapSuperHeroToSuperHeroResponse();
 
         response.Result = hero;
@@ -66,11 +68,23 @@ public class SuperHeroController : ControllerBase
 
     [HttpPost("Add")]
     public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(
-        [FromBody] SuperHeroCreateDto heroCreate
-        //[FromServices] IValidator<SuperHeroCreateDto> validator
-        )
+        [FromBody] SuperHeroCreateDto heroCreate,
+        [FromServices] IValidator<SuperHeroCreateDto> validator)
     {
-        //ValidationResult validationResult = validator.Validate(heroCreate);
+        ValidationResult validationResult = validator.Validate(heroCreate);
+
+        if(!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+
+            foreach (ValidationFailure failure in validationResult.Errors)
+            {
+                modelStateDictionary.AddModelError(failure.PropertyName, failure.ErrorMessage);
+            }
+
+            return ValidationProblem(modelStateDictionary);
+        }
+
         var response = new BaseResponse<SuperHeroResponseDto>();
         
         var hero = heroCreate.MapSuperHeroCreateToSuperHero();
