@@ -47,9 +47,9 @@ public class SuperHeroService : ISuperHeroService
         return await _context.SuperHeroes.ToListAsync();
     }
 
-    public async Task<SuperHero> GetHero(SuperHeroRequestDto requestedHero)
+    public async Task<SuperHero> GetHero(int id)
     {
-        var superHero = await SearchHero(requestedHero);
+        var superHero = await SearchHero(id);
 
         if (superHero is null)
             return null;
@@ -57,16 +57,15 @@ public class SuperHeroService : ISuperHeroService
         return superHero;
     }
 
-    public async Task<SuperHero> AddHero([FromBody]SuperHeroCreateDto heroCreate)
+    public async Task<SuperHero> AddHero(SuperHero heroCreate)
     {
-        var hero = heroCreate.MapSuperHeroCreateToSuperHero();
-        _context.SuperHeroes.Add(hero);
+        _context.SuperHeroes.Add(heroCreate);
         await _context.SaveChangesAsync();
-        return hero;
+        return heroCreate;
 
     }
 
-    public async Task<SuperHero> UpdateHero(SuperHeroUpdateDto heroUpdate)
+    public async Task<SuperHero> UpdateHero(SuperHero heroUpdate)
     {
         var superHeroToUpdate = await _context.SuperHeroes.FindAsync(heroUpdate.Id);
         if (superHeroToUpdate is null)
@@ -83,9 +82,9 @@ public class SuperHeroService : ISuperHeroService
 
     }
 
-    public async Task<bool> DeleteHero(SuperHeroRequestDto requestedHero)
+    public async Task<bool> DeleteHero(int id)
     {
-        var superHeroToDelete = await SearchHero(requestedHero);
+        var superHeroToDelete = await SearchHero(id);
 
         if(superHeroToDelete is null) 
             return false;
@@ -94,9 +93,9 @@ public class SuperHeroService : ISuperHeroService
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task<SuperHero> SearchHero(SuperHeroRequestDto requestedHero)
+    public async Task<SuperHero> SearchHero(int id)
     {
-        var superHero = await _context.SuperHeroes.FindAsync(requestedHero.Id);
+        var superHero = await _context.SuperHeroes.FindAsync(id);
         if (superHero is null)
             return null;
 

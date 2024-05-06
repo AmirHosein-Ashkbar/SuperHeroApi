@@ -1,6 +1,10 @@
 global using SuperHeroApi.Models;
 global using SuperHeroApi.Data;
 using SuperHeroApi.Services.SuperHeroService;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using SuperHeroApi.DTO;
+using SuperHeroApi.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddScoped<IValidator<SuperHeroCreateDto>, CreateSuperHeroValidator>();
 
 var app = builder.Build();
 

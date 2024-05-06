@@ -22,4 +22,16 @@ public static class SuperHeroExtention
 
         return hero;
     }
+    public static SuperHero MapSuperHeroUpdateToSuperHero(this SuperHeroUpdateDto heroUpdate)
+    {
+        var hero = new SuperHero();
+        hero.Id = heroUpdate.Id;
+        hero.Name = heroUpdate.Name;
+        hero.FirstName = heroUpdate.FirstName;
+        hero.LastName = heroUpdate.LastName;
+        hero.Place = heroUpdate.Place;
+
+        return hero;
+    }
+    
 }

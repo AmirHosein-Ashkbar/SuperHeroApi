@@ -5,9 +5,9 @@ namespace SuperHeroApi.Services.SuperHeroService;
 public interface ISuperHeroService
 {
     Task<List<SuperHero>> GetAllHeroes();
-    Task<SuperHero> GetHero(SuperHeroRequestDto requestedHero);
-    Task<SuperHero> AddHero(SuperHeroCreateDto hero);
-    Task<SuperHero> UpdateHero(SuperHeroUpdateDto heroUpdate);
-    Task<bool> DeleteHero(SuperHeroRequestDto requestedHero);
+    Task<SuperHero> GetHero(int id);
+    Task<SuperHero> AddHero(SuperHero hero);
+    Task<SuperHero> UpdateHero(SuperHero heroUpdate);
+    Task<bool> DeleteHero(int id);
 
 }

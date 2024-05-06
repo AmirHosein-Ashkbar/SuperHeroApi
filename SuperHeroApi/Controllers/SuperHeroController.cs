@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SuperHeroApi.DTO;
 using SuperHeroApi.Services.SuperHeroService;
 using SuperHeroApi.Extentions;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace SuperHeroApi.Controllers;
 
@@ -18,7 +20,7 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpGet("GetAll")]
-    public async Task<ActionResult<BaseResponse<List<SuperHeroResponseDto>>>> GetAllHeroes()
+    public async Task<ActionResult<BaseResponse<List<SuperHeroResponseDto>>>> GetAll()
     {
         var response = new BaseResponse<List<SuperHeroResponseDto>>();
 
@@ -39,11 +41,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Get")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> GetHero([FromBody] SuperHeroRequestDto requestedHero )
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get([FromBody] SuperHeroRequestDto requestedHero )
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
 
-        var result = await _superHeroService.GetHero(requestedHero);
+        var result = await _superHeroService.GetHero(requestedHero.Id);
         if (result is null)
         {
             response.Result = null;
@@ -63,14 +65,19 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> AddHero([FromBody]SuperHeroCreateDto heroCreate)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(
+        [FromBody] SuperHeroCreateDto heroCreate
+        //[FromServices] IValidator<SuperHeroCreateDto> validator
+        )
     {
+        //ValidationResult validationResult = validator.Validate(heroCreate);
         var response = new BaseResponse<SuperHeroResponseDto>();
+        
+        var hero = heroCreate.MapSuperHeroCreateToSuperHero();
 
-        var result = await _superHeroService.AddHero(heroCreate);
+        var result = await _superHeroService.AddHero(hero);
 
-        var createdHero = new SuperHeroResponseDto();
-        createdHero = result.MapSuperHeroToSuperHeroResponse();
+        var createdHero = result.MapSuperHeroToSuperHeroResponse();
 
         response.Result = createdHero;
         response.Message = $"{createdHero.Name} is successfully added.";
@@ -80,11 +87,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPut("Update")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> UpdateHero([FromBody] SuperHeroUpdateDto heroUpdate)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Update([FromBody] SuperHeroUpdateDto heroUpdate)
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
-
-        var result = await _superHeroService.UpdateHero(heroUpdate);
+        var hero = heroUpdate.MapSuperHeroUpdateToSuperHero();
+        var result = await _superHeroService.UpdateHero(hero);
         if (result is null)
         {
             response.Result = null;
@@ -93,9 +100,7 @@ public class SuperHeroController : ControllerBase
             response.isSuccess = false;
             return NotFound(response);
         }
-
-        var updatedHero = new SuperHeroResponseDto();
-        updatedHero = result.MapSuperHeroToSuperHeroResponse();
+        var updatedHero = result.MapSuperHeroToSuperHeroResponse();
 
         response.Result = updatedHero;
         response.Message = $"{updatedHero.Name} is successfully updated.";
@@ -104,12 +109,12 @@ public class SuperHeroController : ControllerBase
         return Ok(response);
     }
 
-    [HttpDelete]
-    public async Task<BaseResponse<bool>> DeleteHero([FromBody]SuperHeroRequestDto requestedHero)
+    [HttpDelete("{id}")]
+    public async Task<BaseResponse<bool>> DeleteHero(int id)
     {
         var response = new BaseResponse<bool>();
 
-        var result = await _superHeroService.DeleteHero(requestedHero);
+        var result = await _superHeroService.DeleteHero(id);
         if (result is false)
         {
             response.Result=false;
