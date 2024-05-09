@@ -31,7 +31,7 @@ public class SuperHeroController : ControllerBase
         var heroes = new List<SuperHeroResponseDto>();
         foreach (var item in result)
         {
-            var hero = new SuperHeroResponseDto(item.Name, $"{item.FirstName} {item.LastName}", item.Place);
+            var hero = new SuperHeroResponseDto(item.Id, item.Name, $"{item.FirstName} {item.LastName}", item.Place);
             //hero = item.MapSuperHeroToSuperHeroResponse();
             heroes.Add(hero);
         }
@@ -43,7 +43,7 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Get")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get([FromBody] SuperHeroRequestDto requestedHero )
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get(SuperHeroRequestDto requestedHero )
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
 
@@ -56,7 +56,7 @@ public class SuperHeroController : ControllerBase
             response.isSuccess = false;
             return NotFound(response);
         }
-        var hero = new SuperHeroResponseDto(result.Name, $"{result.FirstName} {result.LastName}", result.Place);
+        var hero = new SuperHeroResponseDto(result.Id, result.Name, $"{result.FirstName} {result.LastName}", result.Place);
         hero = result.MapSuperHeroToSuperHeroResponse();
 
         response.Result = hero;
@@ -67,24 +67,8 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(
-        [FromBody] SuperHeroCreateDto heroCreate,
-        [FromServices] IValidator<SuperHeroCreateDto> validator)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(SuperHeroCreateDto heroCreate)
     {
-        ValidationResult validationResult = validator.Validate(heroCreate);
-
-        if(!validationResult.IsValid)
-        {
-            var modelStateDictionary = new ModelStateDictionary();
-
-            foreach (ValidationFailure failure in validationResult.Errors)
-            {
-                modelStateDictionary.AddModelError(failure.PropertyName, failure.ErrorMessage);
-            }
-
-            return ValidationProblem(modelStateDictionary);
-        }
-
         var response = new BaseResponse<SuperHeroResponseDto>();
         
         var hero = heroCreate.MapSuperHeroCreateToSuperHero();
@@ -101,7 +85,7 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPut("Update")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Update([FromBody] SuperHeroUpdateDto heroUpdate)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Update(SuperHeroUpdateDto heroUpdate)
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
         var hero = heroUpdate.MapSuperHeroUpdateToSuperHero();
@@ -123,7 +107,7 @@ public class SuperHeroController : ControllerBase
         return Ok(response);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("Delete")]
     public async Task<BaseResponse<bool>> DeleteHero(int id)
     {
         var response = new BaseResponse<bool>();

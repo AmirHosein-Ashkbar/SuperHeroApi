@@ -5,18 +5,27 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using SuperHeroApi.DTO;
 using SuperHeroApi.Validations;
+using SuperHeroApi.Common;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
+
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
+
+//adding fluent validation
+builder.Services.AddFluentValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
-builder.Services.AddDbContext<DataContext>();
-builder.Services.AddScoped<IValidator<SuperHeroCreateDto>, CreateSuperHeroValidator>();
+
 
 var app = builder.Build();
 

@@ -1,3 +1,3 @@
 ﻿namespace SuperHeroApi.DTO;
 
-public record SuperHeroResponseDto(string Name, string FullName, string Place);
+public record SuperHeroResponseDto(int id,  string Name, string FullName, string Place);
