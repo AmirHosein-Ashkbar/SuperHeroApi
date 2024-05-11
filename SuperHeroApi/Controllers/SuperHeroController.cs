@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using SuperHeroApi.DTO;
 using SuperHeroApi.Services.SuperHeroService;
-using SuperHeroApi.Extentions;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SuperHeroApi.Extentions.SuperHeroMappingDtoExtentions;
+using SuperHeroApi.DTO.SuperHeroDtos;
+using SuperHeroApi.DTO.SuperPowersDtos;
+using SuperHeroApi.Extentions.SuperPowerMappingExtentions;
 
 namespace SuperHeroApi.Controllers;
 
@@ -31,8 +34,9 @@ public class SuperHeroController : ControllerBase
         var heroes = new List<SuperHeroResponseDto>();
         foreach (var item in result)
         {
-            var hero = new SuperHeroResponseDto(item.Id, item.Name, $"{item.FirstName} {item.LastName}", item.Place);
-            //hero = item.MapSuperHeroToSuperHeroResponse();
+            
+
+            var hero = item.MapSuperHeroToSuperHeroResponse();
             heroes.Add(hero);
         }
         response.Result = heroes;
@@ -43,12 +47,12 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Get")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get(SuperHeroRequestDto requestedHero )
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get(int id)
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
 
-        var result = await _superHeroService.GetHero(requestedHero.Id);
-        if (result is null)
+        var isHeroExist = await _superHeroService.IsHeroExists(id);
+        if (isHeroExist is false)
         {
             response.Result = null;
             response.Message = "hero not found";
@@ -56,8 +60,10 @@ public class SuperHeroController : ControllerBase
             response.isSuccess = false;
             return NotFound(response);
         }
-        var hero = new SuperHeroResponseDto(result.Id, result.Name, $"{result.FirstName} {result.LastName}", result.Place);
-        hero = result.MapSuperHeroToSuperHeroResponse();
+
+        var result = await _superHeroService.GetHero(id);
+
+        var hero = result.MapSuperHeroToSuperHeroResponse();
 
         response.Result = hero;
         response.Message = "OK";
@@ -67,11 +73,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(SuperHeroCreateDto heroCreate)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(SuperHeroCreateDto request)
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
         
-        var hero = heroCreate.MapSuperHeroCreateToSuperHero();
+        var hero = request.MapSuperHeroCreateToSuperHero();
 
         var result = await _superHeroService.AddHero(hero);
 
@@ -89,8 +95,9 @@ public class SuperHeroController : ControllerBase
     {
         var response = new BaseResponse<SuperHeroResponseDto>();
         var hero = heroUpdate.MapSuperHeroUpdateToSuperHero();
-        var result = await _superHeroService.UpdateHero(hero);
-        if (result is null)
+        
+        var isHeroExist = await _superHeroService.IsHeroExists(heroUpdate.Id);
+        if (isHeroExist is false)
         {
             response.Result = null;
             response.Message = "hero not found.";
@@ -98,6 +105,8 @@ public class SuperHeroController : ControllerBase
             response.isSuccess = false;
             return NotFound(response);
         }
+        var result = await _superHeroService.UpdateHero(hero);
+
         var updatedHero = result.MapSuperHeroToSuperHeroResponse();
 
         response.Result = updatedHero;
@@ -111,9 +120,8 @@ public class SuperHeroController : ControllerBase
     public async Task<BaseResponse<bool>> DeleteHero(int id)
     {
         var response = new BaseResponse<bool>();
-
-        var result = await _superHeroService.DeleteHero(id);
-        if (result is false)
+        var isHeroExist = await _superHeroService.IsHeroExists(id);
+        if (isHeroExist is false)
         {
             response.Result=false;
             response.Message = "SuperHero not found.";
@@ -121,6 +129,7 @@ public class SuperHeroController : ControllerBase
             response.isSuccess = false;
             return response;
         }
+        var result = await _superHeroService.DeleteHero(id);
         response.Result = true;
         response.Message = "SuperHero deleted";
         response.StatusCode = 200;

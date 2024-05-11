@@ -1,4 +1,5 @@
-﻿using SuperHeroApi.DTO;
+﻿using Microsoft.EntityFrameworkCore;
+using SuperHeroApi.DTO;
 
 namespace SuperHeroApi.Services.SuperHeroService;
 
@@ -9,5 +10,7 @@ public interface ISuperHeroService
     Task<SuperHero> AddHero(SuperHero hero);
     Task<SuperHero> UpdateHero(SuperHero heroUpdate);
     Task<bool> DeleteHero(int id);
+    Task<bool> IsHeroExists(int id);
+    
 
 }

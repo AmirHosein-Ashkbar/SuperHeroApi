@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SuperHeroApi.Data;
 
@@ -10,9 +11,11 @@ using SuperHeroApi.Data;
 namespace SuperHeroApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240510171000_ConfigurationAddedByFluentApi")]
+    partial class ConfigurationAddedByFluentApi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,49 +55,6 @@ namespace SuperHeroApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SuperHeroes");
-                });
-
-            modelBuilder.Entity("SuperHeroApi.Models.SuperPower", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("SuperHeroId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SuperHeroId");
-
-                    b.ToTable("SuperPowers");
-                });
-
-            modelBuilder.Entity("SuperHeroApi.Models.SuperPower", b =>
-                {
-                    b.HasOne("SuperHeroApi.Models.SuperHero", "SuperHero")
-                        .WithMany("SuperPowers")
-                        .HasForeignKey("SuperHeroId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SuperHero");
-                });
-
-            modelBuilder.Entity("SuperHeroApi.Models.SuperHero", b =>
-                {
-                    b.Navigation("SuperPowers");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,6 @@
-﻿namespace SuperHeroApi.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SuperHeroApi.Models;
 
 public class SuperHero
 {
@@ -7,5 +9,6 @@ public class SuperHero
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Place { get; set; }
+    public List<SuperPower>? SuperPowers { get; set; } = new List<SuperPower>();
      
 }

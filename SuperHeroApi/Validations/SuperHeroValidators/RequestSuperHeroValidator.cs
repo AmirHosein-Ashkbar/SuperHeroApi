@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using SuperHeroApi.DTO;
+using SuperHeroApi.DTO.SuperHeroDtos;
 
-namespace SuperHeroApi.Validations;
+namespace SuperHeroApi.Validations.SuperHeroValidations;
 
 public class RequestSuperHeroValidator : AbstractValidator<SuperHeroRequestDto>
 {
