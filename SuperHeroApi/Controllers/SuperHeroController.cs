@@ -26,12 +26,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpGet("GetAll")]
-    public async Task<ActionResult<BaseResponse<List<SuperHeroResponseDto>>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<List<SuperHeroResponseDto>>> GetAll(CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
 
-        var response = new BaseResponse<List<SuperHeroResponseDto>>();
 
         var result = await _superHeroService.GetAllHeroes();
 
@@ -41,48 +40,33 @@ public class SuperHeroController : ControllerBase
             var hero = item.MapSuperHeroToSuperHeroResponse();
             heroes.Add(hero);
         }
-        response.Result = heroes;
-        response.StatusCode = 200;
-        response.Message = "OK";
-        response.isSuccess = true;
-        return Ok(response);
+        return Ok(heroes);
     }
 
     [HttpPost("Get")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get(int id,CancellationToken cancellationToken)
+    public async Task<ActionResult<SuperHeroResponseDto>> Get(int id,CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
-        var response = new BaseResponse<SuperHeroResponseDto>();
 
         var isHeroExist = await _superHeroService.IsHeroExists(id);
         if (isHeroExist is false)
-        {
-            response.Result = null;
-            response.Message = "hero not found";
-            response.StatusCode = 404;
-            response.isSuccess = false;
-            return NotFound(response);
-        }
+            return NotFound();
+        
 
         var result = await _superHeroService.GetHero(id);
 
         var hero = result.MapSuperHeroToSuperHeroResponse();
 
-        response.Result = hero;
-        response.Message = "OK";
-        response.StatusCode = 200;
-        response.isSuccess = true;
-        return Ok(response);
+        return Ok(hero);
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(SuperHeroCreateDto request, CancellationToken cancellationToken)
+    public async Task<ActionResult<SuperHeroResponseDto>> Add(SuperHeroCreateDto request, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
 
-        var response = new BaseResponse<SuperHeroResponseDto>();
         
         var hero = request.MapSuperHeroCreateToSuperHero();
 
@@ -90,64 +74,43 @@ public class SuperHeroController : ControllerBase
 
         var createdHero = result.MapSuperHeroToSuperHeroResponse();
 
-        response.Result = createdHero;
-        response.Message = $"{createdHero.Name} is successfully added.";
-        response.StatusCode = 200;
-        response.isSuccess = true;
-        return Ok(response);
+        return Ok(createdHero);
     }
 
     [HttpPut("Update")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Update(SuperHeroUpdateDto heroUpdate, CancellationToken cancellationToken)
+    public async Task<ActionResult<SuperHeroResponseDto>> Update(SuperHeroUpdateDto heroUpdate, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
 
-        var response = new BaseResponse<SuperHeroResponseDto>();
         var hero = heroUpdate.MapSuperHeroUpdateToSuperHero();
         
         var isHeroExist = await _superHeroService.IsHeroExists(heroUpdate.Id);
         if (isHeroExist is false)
         {
-            response.Result = null;
-            response.Message = "hero not found.";
-            response.StatusCode = 404;
-            response.isSuccess = false;
-            return NotFound(response);
+            return NotFound();
         }
         var result = await _superHeroService.UpdateHero(hero);
 
         var updatedHero = result.MapSuperHeroToSuperHeroResponse();
 
-        response.Result = updatedHero;
-        response.Message = $"{updatedHero.Name} is successfully updated.";
-        response.StatusCode = 200;
-        response.isSuccess = true;
-        return Ok(response);
+        return Ok(updatedHero);
     }
 
     [HttpDelete("Delete")]
-    public async Task<ActionResult<BaseResponse<bool>>> DeleteHero(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult<bool>> DeleteHero(int id, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
-        
-        var response = new BaseResponse<bool>();
+       
         var isHeroExist = await _superHeroService.IsHeroExists(id);
         if (isHeroExist is false)
         {
-            response.Result=false;
-            response.Message = "SuperHero not found.";
-            response.StatusCode = 404;
-            response.isSuccess = false;
-            return response;
+            return NotFound(false);
         }
         var result = await _superHeroService.DeleteHero(id);
-        response.Result = true;
-        response.Message = "SuperHero deleted";
-        response.StatusCode = 200;
-        response.isSuccess = true;
-        return response;
+
+        return Ok(result);
     }
 
 }
