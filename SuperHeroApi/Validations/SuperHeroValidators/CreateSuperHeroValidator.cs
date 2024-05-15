@@ -2,6 +2,8 @@
 using SuperHeroApi.DTO.SuperHeroDtos;
 using SuperHeroApi.Services.SuperHeroService;
 using SuperHeroApi.Validations.CustomValidators;
+using SuperHeroApi.Validations.PersonValidators;
+using SuperHeroApi.Validations.SuperPowerValidators;
 
 namespace SuperHeroApi.Validations.SuperHeroValidations;
 
@@ -15,9 +17,9 @@ public class CreateSuperHeroValidator : AbstractValidator<SuperHeroCreateDto>
             .MaximumLength(30)
             .UniqueName(superHeroService);
 
-        RuleFor(x => x.FirstName).NotNull().NotEmpty().MaximumLength(30);
-        RuleFor(x => x.LastName).NotNull().NotEmpty().MaximumLength(30);
-        RuleFor(x => x.Place).NotNull().NotEmpty().MaximumLength(30);
+        RuleForEach(x => x.SuperPowers).SetValidator(new CreateSuperPowerValidator());
+
+        RuleFor(x => x.Person).SetValidator(new CreatePersonValidator());
     }
 
 }

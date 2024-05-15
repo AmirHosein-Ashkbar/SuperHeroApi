@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SuperHeroApi.Data;
 
@@ -10,9 +11,11 @@ using SuperHeroApi.Data;
 namespace SuperHeroApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240515045424_PersonTableAdded")]
+    partial class PersonTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace SuperHeroApi.Migrations
                     b.HasIndex("SuperHeroId")
                         .IsUnique();
 
-                    b.ToTable("Person", (string)null);
+                    b.ToTable("Person");
                 });
 
             modelBuilder.Entity("SuperHeroApi.Models.SuperHero", b =>
@@ -63,14 +66,29 @@ namespace SuperHeroApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Place")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SuperHeroes", (string)null);
+                    b.ToTable("SuperHeroes");
                 });
 
             modelBuilder.Entity("SuperHeroApi.Models.SuperPower", b =>
@@ -97,7 +115,7 @@ namespace SuperHeroApi.Migrations
 
                     b.HasIndex("SuperHeroId");
 
-                    b.ToTable("SuperPowers", (string)null);
+                    b.ToTable("SuperPowers");
                 });
 
             modelBuilder.Entity("SuperHeroApi.Models.Person", b =>
@@ -124,8 +142,7 @@ namespace SuperHeroApi.Migrations
 
             modelBuilder.Entity("SuperHeroApi.Models.SuperHero", b =>
                 {
-                    b.Navigation("Person")
-                        .IsRequired();
+                    b.Navigation("Person");
 
                     b.Navigation("SuperPowers");
                 });

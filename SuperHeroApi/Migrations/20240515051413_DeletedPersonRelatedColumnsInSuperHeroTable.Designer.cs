@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SuperHeroApi.Data;
 
@@ -10,9 +11,11 @@ using SuperHeroApi.Data;
 namespace SuperHeroApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240515051413_DeletedPersonRelatedColumnsInSuperHeroTable")]
+    partial class DeletedPersonRelatedColumnsInSuperHeroTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace SuperHeroApi.Migrations
                     b.HasIndex("SuperHeroId")
                         .IsUnique();
 
-                    b.ToTable("Person", (string)null);
+                    b.ToTable("Person");
                 });
 
             modelBuilder.Entity("SuperHeroApi.Models.SuperHero", b =>
@@ -70,7 +73,7 @@ namespace SuperHeroApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SuperHeroes", (string)null);
+                    b.ToTable("SuperHeroes");
                 });
 
             modelBuilder.Entity("SuperHeroApi.Models.SuperPower", b =>
@@ -97,7 +100,7 @@ namespace SuperHeroApi.Migrations
 
                     b.HasIndex("SuperHeroId");
 
-                    b.ToTable("SuperPowers", (string)null);
+                    b.ToTable("SuperPowers");
                 });
 
             modelBuilder.Entity("SuperHeroApi.Models.Person", b =>

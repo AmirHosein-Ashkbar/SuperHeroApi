@@ -12,22 +12,27 @@ public class DataContext : DbContext
         var SuperHeroes = modelBuilder.Entity<SuperHero>();
         SuperHeroes.HasKey(h => h.Id);
         SuperHeroes.Property(h => h.Name).IsRequired().HasMaxLength(30);
-        SuperHeroes.Property(h => h.FirstName).IsRequired().HasMaxLength(30);
-        SuperHeroes.Property(h => h.LastName).IsRequired().HasMaxLength(30);
-        SuperHeroes.Property(h => h.Place).IsRequired().HasMaxLength(30);
+
         //SuperPowers table
         var SuperPowers = modelBuilder.Entity<SuperPower>();
         SuperPowers.HasKey(s => s.Id);
         SuperPowers.Property(p => p.Name).IsRequired().HasMaxLength(30);
         SuperPowers.Property(p => p.Description).HasMaxLength(250);
+        //Person table
+        var Person = modelBuilder.Entity<Person>();
+        Person.HasKey(h => h.Id);
+        Person.Property(p => p.FirstName).IsRequired().HasMaxLength(30);
+        Person.Property(p => p.LastName).IsRequired().HasMaxLength(30);
+        Person.Property(p => p.BirthPlace).IsRequired().HasMaxLength(30);
 
         #region Relations
         SuperPowers.HasOne(h => h.SuperHero).WithMany(p => p.SuperPowers);
+        SuperHeroes.HasOne(h => h.Person).WithOne(p => p.SuperHero);
         #endregion
     }
 
     public DbSet<SuperHero> SuperHeroes { get; set; }
     public DbSet<SuperPower> SuperPowers { get; set; }
-
+    public DbSet<Person> Person { get; set; }
 
 }

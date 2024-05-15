@@ -10,6 +10,7 @@ using SuperHeroApi.Extentions.SuperHeroMappingDtoExtentions;
 using SuperHeroApi.DTO.SuperHeroDtos;
 using SuperHeroApi.DTO.SuperPowersDtos;
 using SuperHeroApi.Extentions.SuperPowerMappingExtentions;
+using System.Threading;
 
 namespace SuperHeroApi.Controllers;
 
@@ -25,8 +26,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpGet("GetAll")]
-    public async Task<ActionResult<BaseResponse<List<SuperHeroResponseDto>>>> GetAll()
+    public async Task<ActionResult<BaseResponse<List<SuperHeroResponseDto>>>> GetAll(CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return BadRequest();
+
         var response = new BaseResponse<List<SuperHeroResponseDto>>();
 
         var result = await _superHeroService.GetAllHeroes();
@@ -34,8 +38,6 @@ public class SuperHeroController : ControllerBase
         var heroes = new List<SuperHeroResponseDto>();
         foreach (var item in result)
         {
-            
-
             var hero = item.MapSuperHeroToSuperHeroResponse();
             heroes.Add(hero);
         }
@@ -47,8 +49,10 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Get")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get(int id)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Get(int id,CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return BadRequest();
         var response = new BaseResponse<SuperHeroResponseDto>();
 
         var isHeroExist = await _superHeroService.IsHeroExists(id);
@@ -73,8 +77,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(SuperHeroCreateDto request)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Add(SuperHeroCreateDto request, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return BadRequest();
+
         var response = new BaseResponse<SuperHeroResponseDto>();
         
         var hero = request.MapSuperHeroCreateToSuperHero();
@@ -91,8 +98,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPut("Update")]
-    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Update(SuperHeroUpdateDto heroUpdate)
+    public async Task<ActionResult<BaseResponse<SuperHeroResponseDto>>> Update(SuperHeroUpdateDto heroUpdate, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return BadRequest();
+
         var response = new BaseResponse<SuperHeroResponseDto>();
         var hero = heroUpdate.MapSuperHeroUpdateToSuperHero();
         
@@ -117,8 +127,11 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpDelete("Delete")]
-    public async Task<BaseResponse<bool>> DeleteHero(int id)
+    public async Task<ActionResult<BaseResponse<bool>>> DeleteHero(int id, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return BadRequest();
+        
         var response = new BaseResponse<bool>();
         var isHeroExist = await _superHeroService.IsHeroExists(id);
         if (isHeroExist is false)

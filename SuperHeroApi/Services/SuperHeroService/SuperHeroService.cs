@@ -17,7 +17,7 @@ public class SuperHeroService : ISuperHeroService
 
     public async Task<List<SuperHero>> GetAllHeroes()
     {
-        return await _context.SuperHeroes.Include(h => h.SuperPowers).ToListAsync();
+        return await _context.SuperHeroes.Include(h => h.SuperPowers).Include(h => h.Person).ToListAsync();
     }
 
     public async Task<SuperHero> GetHero(int id)
@@ -44,13 +44,10 @@ public class SuperHeroService : ISuperHeroService
     {
         var superHeroList = await GetAllHeroes();
         var superHeroToUpdate = superHeroList.Find(h => h.Id == heroUpdate.Id);  
-        if (superHeroToUpdate is null)
-            return null;
+        
 
         superHeroToUpdate.Name = heroUpdate.Name;
-        superHeroToUpdate.FirstName = heroUpdate.FirstName;
-        superHeroToUpdate.LastName = heroUpdate.LastName;
-        superHeroToUpdate.Place = heroUpdate.Place;
+        superHeroToUpdate.Person = heroUpdate.Person;
         
         // Emptying the powers list & Adding powers to powerslist 
         superHeroToUpdate.SuperPowers.Clear();

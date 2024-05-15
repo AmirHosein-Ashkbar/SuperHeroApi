@@ -1,5 +1,6 @@
-﻿using SuperHeroApi.DTO.SuperPowersDtos;
+﻿using SuperHeroApi.DTO.PersonDtos;
+using SuperHeroApi.DTO.SuperPowersDtos;
 
 namespace SuperHeroApi.DTO.SuperHeroDtos;
 
-public record SuperHeroResponseDto(int id, string Name, string FullName, string Place, List<SuperPowerResponseDto>? SuperPowers);
+public record SuperHeroResponseDto(int id, string Name, PersonResponseDto Person, List<SuperPowerResponseDto>? SuperPowers);
