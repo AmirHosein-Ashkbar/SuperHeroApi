@@ -14,8 +14,8 @@ public class CreateSuperHeroValidator : AbstractValidator<SuperHeroCreateDto>
         RuleFor(x => x.Name)
             .NotNull().WithMessage("{PropertyName} Must not be null")
             .NotEmpty().WithMessage("Name Must not be Empty")
-            .MaximumLength(30)
-            .UniqueName(superHeroService);
+            .MaximumLength(30);
+            //.UniqueName(superHeroService);
 
         RuleForEach(x => x.SuperPowers).SetValidator(new CreateSuperPowerValidator());
 

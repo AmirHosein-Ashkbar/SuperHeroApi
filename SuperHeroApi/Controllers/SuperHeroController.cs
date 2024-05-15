@@ -43,8 +43,8 @@ public class SuperHeroController : ControllerBase
         return Ok(heroes);
     }
 
-    [HttpPost("Get")]
-    public async Task<ActionResult<SuperHeroResponseDto>> Get(int id,CancellationToken cancellationToken)
+    [HttpGet("Get")]
+    public async Task<ActionResult<SuperHeroResponseDto>> Get(int id, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
@@ -52,7 +52,7 @@ public class SuperHeroController : ControllerBase
         var isHeroExist = await _superHeroService.IsHeroExists(id);
         if (isHeroExist is false)
             return NotFound();
-        
+
 
         var result = await _superHeroService.GetHero(id);
 
@@ -67,7 +67,7 @@ public class SuperHeroController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
 
-        
+
         var hero = request.MapSuperHeroCreateToSuperHero();
 
         var result = await _superHeroService.AddHero(hero);
@@ -78,19 +78,18 @@ public class SuperHeroController : ControllerBase
     }
 
     [HttpPut("Update")]
-    public async Task<ActionResult<SuperHeroResponseDto>> Update(SuperHeroUpdateDto heroUpdate, CancellationToken cancellationToken)
+    public async Task<ActionResult<SuperHeroResponseDto>> Update(int id, SuperHeroCreateDto heroUpdate, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
 
-        var hero = heroUpdate.MapSuperHeroUpdateToSuperHero();
-        
-        var isHeroExist = await _superHeroService.IsHeroExists(heroUpdate.Id);
+        var isHeroExist = await _superHeroService.IsHeroExists(id);
         if (isHeroExist is false)
-        {
             return NotFound();
-        }
-        var result = await _superHeroService.UpdateHero(hero);
+
+        var hero = heroUpdate.MapSuperHeroCreateToSuperHero();
+
+        var result = await _superHeroService.UpdateHero(id, hero);
 
         var updatedHero = result.MapSuperHeroToSuperHeroResponse();
 
@@ -102,7 +101,7 @@ public class SuperHeroController : ControllerBase
     {
         if (cancellationToken.IsCancellationRequested)
             return BadRequest();
-       
+
         var isHeroExist = await _superHeroService.IsHeroExists(id);
         if (isHeroExist is false)
         {

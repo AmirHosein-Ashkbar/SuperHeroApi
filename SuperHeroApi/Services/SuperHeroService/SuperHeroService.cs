@@ -40,15 +40,16 @@ public class SuperHeroService : ISuperHeroService
 
     }
 
-    public async Task<SuperHero> UpdateHero(SuperHero heroUpdate)
+    public async Task<SuperHero> UpdateHero(int id, SuperHero heroUpdate)
     {
         var superHeroList = await GetAllHeroes();
-        var superHeroToUpdate = superHeroList.Find(h => h.Id == heroUpdate.Id);  
+        var superHeroToUpdate = superHeroList.Find(h => h.Id == id);  
         
 
         superHeroToUpdate.Name = heroUpdate.Name;
         superHeroToUpdate.Person = heroUpdate.Person;
         
+
         // Emptying the powers list & Adding powers to powerslist 
         superHeroToUpdate.SuperPowers.Clear();
         if (heroUpdate.SuperPowers is not null && heroUpdate.SuperPowers.Count is not 0 )
