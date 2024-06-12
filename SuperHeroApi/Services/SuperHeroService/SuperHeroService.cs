@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SuperHeroApi.DTO;
-using SuperHeroApi.Extentions;
 using SuperHeroApi.Models;
 using System.Linq;
 
@@ -17,12 +16,15 @@ public class SuperHeroService : ISuperHeroService
 
     public async Task<List<SuperHero>> GetAllHeroes()
     {
-        return await _context.SuperHeroes.Include(h => h.SuperPowers).Include(h => h.Person).ToListAsync();
+        return await _context.SuperHeroes
+            .Include(h => h.SuperPowers)
+            .Include(h => h.Person)
+            .Include(h => h.Leagues)
+            .ToListAsync();
     }
 
     public async Task<SuperHero> GetHero(int id)
     {
-        //var superHeroList = await _context.SuperHeroes.Include(h => h.SuperPowers).ToListAsync();
         var superHeroList = await GetAllHeroes();
         var superHero = superHeroList.Find(h => h.Id == id);
         
@@ -51,12 +53,21 @@ public class SuperHeroService : ISuperHeroService
         
 
         // Emptying the powers list & Adding powers to powerslist 
-        superHeroToUpdate.SuperPowers.Clear();
         if (heroUpdate.SuperPowers is not null && heroUpdate.SuperPowers.Count is not 0 )
         {
+            superHeroToUpdate.SuperPowers.Clear();
             foreach (var power in heroUpdate.SuperPowers)
             {
                 superHeroToUpdate.SuperPowers.Add(power);
+            }
+        }
+        // Emptying the league list & Adding powers to powerslist 
+        if (heroUpdate.Leagues is not null && heroUpdate.Leagues.Count is not 0)
+        {
+            superHeroToUpdate.Leagues.Clear();
+            foreach (var league in heroUpdate.Leagues)
+            {
+                superHeroToUpdate.Leagues.Add(league);
             }
         }
 

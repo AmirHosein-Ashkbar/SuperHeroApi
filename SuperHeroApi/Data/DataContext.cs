@@ -24,15 +24,20 @@ public class DataContext : DbContext
         Person.Property(p => p.FirstName).IsRequired().HasMaxLength(30);
         Person.Property(p => p.LastName).IsRequired().HasMaxLength(30);
         Person.Property(p => p.BirthPlace).IsRequired().HasMaxLength(30);
+        //Leagues Table
+        var Leagues = modelBuilder.Entity<League>();
+        Leagues.HasKey(h => h.Id);
+        Leagues.Property(p => p.Name).IsRequired().HasMaxLength(30);
 
         #region Relations
         SuperPowers.HasOne(h => h.SuperHero).WithMany(p => p.SuperPowers);
         SuperHeroes.HasOne(h => h.Person).WithOne(p => p.SuperHero);
+        SuperHeroes.HasMany(h => h.Leagues).WithMany(l => l.SuperHeroes);
         #endregion
     }
 
     public DbSet<SuperHero> SuperHeroes { get; set; }
     public DbSet<SuperPower> SuperPowers { get; set; }
     public DbSet<Person> Person { get; set; }
-
+    public DbSet<League> Leagues { get; set; }
 }

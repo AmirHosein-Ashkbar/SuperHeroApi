@@ -1,16 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SuperHeroApi.DTO;
+﻿using Microsoft.AspNetCore.Mvc;
 using SuperHeroApi.Services.SuperHeroService;
-using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using SuperHeroApi.Extentions.SuperHeroMappingDtoExtentions;
 using SuperHeroApi.DTO.SuperHeroDtos;
-using SuperHeroApi.DTO.SuperPowersDtos;
-using SuperHeroApi.Extentions.SuperPowerMappingExtentions;
-using System.Threading;
+using AutoMapper;
+using SuperHeroApi.Services.LeagueService;
 
 namespace SuperHeroApi.Controllers;
 
@@ -19,10 +11,14 @@ namespace SuperHeroApi.Controllers;
 public class SuperHeroController : ControllerBase
 {
     private readonly ISuperHeroService _superHeroService;
+    private readonly IMapper _mapper;
+    private readonly ILeagueService _leagueService;
 
-    public SuperHeroController(ISuperHeroService superHeroService)
+    public SuperHeroController(ISuperHeroService superHeroService, IMapper mapper, ILeagueService leagueService)
     {
         _superHeroService = superHeroService;
+        _mapper = mapper;
+        _leagueService = leagueService;
     }
 
     [HttpGet("GetAll")]
@@ -37,7 +33,7 @@ public class SuperHeroController : ControllerBase
         var heroes = new List<SuperHeroResponseDto>();
         foreach (var item in result)
         {
-            var hero = item.MapSuperHeroToSuperHeroResponse();
+            var hero = _mapper.Map<SuperHeroResponseDto>(item);
             heroes.Add(hero);
         }
         return Ok(heroes);
@@ -56,7 +52,7 @@ public class SuperHeroController : ControllerBase
 
         var result = await _superHeroService.GetHero(id);
 
-        var hero = result.MapSuperHeroToSuperHeroResponse();
+        var hero = _mapper.Map<SuperHeroResponseDto>(result);
 
         return Ok(hero);
     }
@@ -68,11 +64,11 @@ public class SuperHeroController : ControllerBase
             return BadRequest();
 
 
-        var hero = request.MapSuperHeroCreateToSuperHero();
+        var hero = _mapper.Map<SuperHero>(request);
 
         var result = await _superHeroService.AddHero(hero);
 
-        var createdHero = result.MapSuperHeroToSuperHeroResponse();
+        var createdHero = _mapper.Map<SuperHeroResponseDto>(result);
 
         return Ok(createdHero);
     }
@@ -87,11 +83,11 @@ public class SuperHeroController : ControllerBase
         if (isHeroExist is false)
             return NotFound();
 
-        var hero = heroUpdate.MapSuperHeroCreateToSuperHero();
+        var hero = _mapper.Map<SuperHero>(heroUpdate);
 
         var result = await _superHeroService.UpdateHero(id, hero);
 
-        var updatedHero = result.MapSuperHeroToSuperHeroResponse();
+        var updatedHero = _mapper.Map<SuperHeroResponseDto>(result);
 
         return Ok(updatedHero);
     }
